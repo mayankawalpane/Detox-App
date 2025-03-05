@@ -1,85 +1,91 @@
 <div class="time-settings-container">
-    <div class="header">
-      <h1>Digital Weaving</h1>
-      <p>Set a time period to stay away from your phone</p>
-    </div>
-  
-    <!-- Result message (success/failure) -->
-    <div *ngIf="lastSession" class="result-message" [class.success]="lastSession.successful" [class.failure]="!lastSession.successful">
-      <div *ngIf="lastSession.successful" class="message-content">
-        <h3>🎉 Detox Completed Successfully!</h3>
-        <p>Congratulations! You've successfully completed your digital detox period.</p>
-      </div>
-      <div *ngIf="!lastSession.successful" class="message-content">
-        <h3>⚠️ Detox Failed</h3>
-        <p>You used your phone during the detox period. Try again!</p>
-      </div>
-    </div>
-  
-    <form [formGroup]="timeForm" (ngSubmit)="onSubmit()" class="time-form">
-      <div class="time-inputs">
-        <div class="input-group">
-          <label for="days">Days</label>
-          <input 
-            type="number" 
-            id="days" 
-            formControlName="days" 
-            min="0" 
-            class="time-input"
-          >
-        </div>
-  
-        <div class="input-group">
-          <label for="hours">Hours</label>
-          <input 
-            type="number" 
-            id="hours" 
-            formControlName="hours" 
-            min="0" 
-            max="23"
-            class="time-input"
-          >
-        </div>
-  
-        <div class="input-group">
-          <label for="minutes">Minutes</label>
-          <input 
-            type="number" 
-            id="minutes" 
-            formControlName="minutes" 
-            min="0" 
-            max="59"
-            class="time-input"
-          >
-        </div>
-  
-        <!-- Added seconds input field -->
-        <div class="input-group">
-          <label for="seconds">Seconds</label>
-          <input 
-            type="number" 
-            id="seconds" 
-            formControlName="seconds" 
-            min="0" 
-            max="59"
-            class="time-input"
-          >
-        </div>
-      </div>
-  
-      <button type="submit" class="start-button" [disabled]="timeForm.invalid">
-        Start Digital Detox
-      </button>
-    </form>
-  
-    <div class="instructions">
-      <h3>How it works:</h3>
-      <ol>
-        <li>Set your desired detox period</li>
-        <li>Press "Start Digital Detox"</li>
-        <li>Put down your phone!</li>
-        <li>If you check your phone, your detox will fail</li>
-        <li>Complete the entire period without checking to succeed</li>
-      </ol>
+  <div class="header">
+    <h1>Digital Weaving</h1>
+    <p>Set a time period to stay away from your phone</p>
+    <div class="user-info">
+      <small>Current User: {{ username }} | Date/Time (UTC): {{ currentDateTime }}</small>
     </div>
   </div>
+
+  <!-- Result message (success/failure) -->
+  <div *ngIf="lastSession" class="result-message" [class.success]="lastSession.successful" [class.failure]="!lastSession.successful">
+    <div *ngIf="lastSession.successful" class="message-content">
+      <h3>🎉 Detox Completed Successfully!</h3>
+      <p>Congratulations! You've successfully completed your digital detox period.</p>
+    </div>
+    <div *ngIf="!lastSession.successful" class="message-content">
+      <h3>⚠️ Detox Failed</h3>
+      <p>You used your phone during the detox period. Try again!</p>
+    </div>
+  </div>
+
+  <form [formGroup]="timeForm" (ngSubmit)="onSubmit()" class="time-form">
+    <div class="time-inputs">
+      <div class="input-group">
+        <label for="days">Days</label>
+        <input 
+          type="number" 
+          id="days" 
+          formControlName="days" 
+          min="0" 
+          class="time-input"
+        >
+      </div>
+
+      <div class="input-group">
+        <label for="hours">Hours</label>
+        <input 
+          type="number" 
+          id="hours" 
+          formControlName="hours" 
+          min="0" 
+          max="23"
+          class="time-input"
+        >
+      </div>
+
+      <div class="input-group">
+        <label for="minutes">Minutes</label>
+        <input 
+          type="number" 
+          id="minutes" 
+          formControlName="minutes" 
+          min="0" 
+          max="59"
+          class="time-input"
+        >
+      </div>
+
+      <div class="input-group">
+        <label for="seconds">Seconds</label>
+        <input 
+          type="number" 
+          id="seconds" 
+          formControlName="seconds" 
+          min="0" 
+          max="59"
+          class="time-input"
+        >
+      </div>
+    </div>
+
+    <button type="submit" class="start-button" [disabled]="timeForm.invalid">
+      Start Digital Detox
+    </button>
+  </form>
+
+  <div class="instructions">
+    <h3>How it works:</h3>
+    <ol>
+      <li>Set your desired detox period</li>
+      <li>Press "Start Digital Detox"</li>
+      <li><strong>Turn off your screen</strong> by pressing the power button</li>
+      <li>The detox timer will continue even with your screen off</li>
+      <li>If you turn your screen back on before the time is up, you fail</li>
+      <li>The app will automatically complete if the timer ends while your screen is off</li>
+    </ol>
+    <div class="important-note">
+      <strong>Important:</strong> Don't close the app or browser! The detox will only continue if you leave the app open and just turn off your screen.
+    </div>
+  </div>
+</div>

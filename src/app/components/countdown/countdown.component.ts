@@ -15,12 +15,10 @@ export class CountdownComponent implements OnInit, OnDestroy {
   seconds = 0;
   showPopup = false;
   detoxFailed = false;
+  username: string = '';
+  currentDateTime: string = '';
   
   private timerSubscription?: Subscription;
-  private visibilitySubscription?: Subscription;
-  private lastActive = Date.now();
-  private checkInterval = 500; // check every 500ms
-  private popupDismissed = false;
 
   constructor(
     private timeTrackerService: TimeTrackerService,
@@ -28,6 +26,11 @@ export class CountdownComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    // Get user information
+    const userInfo = this.timeTrackerService.getUserInfo();
+    this.username = userInfo.username;
+    this.currentDateTime = `${userInfo.currentDate} ${userInfo.currentTime}`;
+    
     // Check if there's an active session
     const settings = this.timeTrackerService.getCurrentSettings();
     if (!settings.isActive) {
@@ -47,65 +50,21 @@ export class CountdownComponent implements OnInit, OnDestroy {
       this.seconds = remaining.seconds;
     });
 
-    // Setup activity detection
-    this.setupActivityDetection();
+    // Check if session already failed
+    if (settings.hasFailed) {
+      this.showDetoxFailedPopup();
+    }
   }
 
   ngOnDestroy(): void {
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
-    if (this.visibilitySubscription) {
-      this.visibilitySubscription.unsubscribe();
-    }
-  }
-
-  private setupActivityDetection(): void {
-    // Track page visibility changes
-    document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
-    
-    // Track touch/mouse events to detect activity
-    document.addEventListener('touchstart', this.handleActivity.bind(this));
-    document.addEventListener('touchmove', this.handleActivity.bind(this));
-    document.addEventListener('mousemove', this.handleActivity.bind(this));
-    document.addEventListener('click', this.handleActivity.bind(this));
-    
-    // Check activity periodically
-    this.visibilitySubscription = interval(this.checkInterval).subscribe(() => {
-      this.checkActivity();
-    });
-  }
-
-  private handleVisibilityChange(): void {
-    if (document.visibilityState === 'visible') {
-      this.showDetoxFailedPopup();
-    }
-  }
-
-  private handleActivity(): void {
-    const now = Date.now();
-    if (now - this.lastActive > 10000) { // If inactive for more than 10 seconds
-      this.showDetoxFailedPopup();
-    }
-    this.lastActive = now;
-  }
-
-  private checkActivity(): void {
-    const now = Date.now();
-    if (now - this.lastActive > 60000) { // If inactive for more than a minute
-      // This is a simple heuristic assuming user put the phone down
-      this.lastActive = now; // Reset the timer
-    }
   }
 
   showDetoxFailedPopup(): void {
-    if (this.popupDismissed) {
-      return; // Don't show popup again if already dismissed
-    }
-    
     this.detoxFailed = true;
     this.showPopup = true;
-    this.timeTrackerService.failSession();
     
     // Hide popup after 5 seconds and navigate back to settings
     setTimeout(() => {
@@ -116,7 +75,6 @@ export class CountdownComponent implements OnInit, OnDestroy {
 
   dismissPopup(): void {
     this.showPopup = false;
-    this.popupDismissed = true;
     this.timeTrackerService.completeSession(false);
   }
 

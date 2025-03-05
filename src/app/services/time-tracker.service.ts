@@ -3,14 +3,15 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 export interface TimeSettings {
-  seconds: number; // Added seconds
+  seconds: number;
   minutes: number;
   hours: number;
   days: number;
   startTime?: Date;
   endTime?: Date;
   isActive: boolean;
-  hasFailed?: boolean; // Track if detox was interrupted
+  hasFailed?: boolean;
+  lastPauseTime?: number; // When screen was turned off
 }
 
 @Injectable({
@@ -26,10 +27,51 @@ export class TimeTrackerService {
     isActive: false,
     hasFailed: false
   });
+  
+  private userInfo = {
+    username: 'mayankawalpane',
+    currentDate: '2025-03-05',
+    currentTime: '10:32:21'
+  };
 
   constructor(private router: Router) {
     this.loadFromStorage();
     this.checkActiveSession();
+    
+    // Screen lock/unlock detection
+    document.addEventListener('visibilitychange', () => {
+      this.handleVisibilityChange(document.visibilityState);
+    });
+  }
+
+  private handleVisibilityChange(state: string): void {
+    const settings = this.timeSettings.value;
+    if (!settings.isActive) return;
+    
+    if (state === 'hidden') {
+      // Screen turned off - just store the time
+      settings.lastPauseTime = Date.now();
+      this.saveToStorage(settings);
+    } else if (state === 'visible') {
+      // Screen turned back on - check if detox succeeded or failed
+      if (!settings.lastPauseTime) return;
+      
+      const now = Date.now();
+      const pauseTime = settings.lastPauseTime;
+      
+      // If the timer ended while screen was off, this is a success
+      if (settings.endTime && now >= settings.endTime.getTime()) {
+        this.completeSession(true);
+        return;
+      }
+      
+      // Otherwise, turning the screen on means the detox failed
+      this.failSession();
+    }
+  }
+
+  getUserInfo(): { username: string, currentDate: string, currentTime: string } {
+    return this.userInfo;
   }
 
   private loadFromStorage(): void {

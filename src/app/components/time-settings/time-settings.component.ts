@@ -10,6 +10,8 @@ import { TimeTrackerService } from '../../services/time-tracker.service';
 export class TimeSettingsComponent implements OnInit {
   timeForm!: FormGroup;
   lastSession: any = null;
+  username: string = '';
+  currentDateTime: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -17,8 +19,13 @@ export class TimeSettingsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Get user information
+    const userInfo = this.timeTrackerService.getUserInfo();
+    this.username = userInfo.username;
+    this.currentDateTime = `${userInfo.currentDate} ${userInfo.currentTime}`;
+    
     this.timeForm = this.fb.group({
-      seconds: [0, [Validators.required, Validators.min(0), Validators.max(59)]], // Added seconds
+      seconds: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
       minutes: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
       hours: [0, [Validators.required, Validators.min(0), Validators.max(23)]],
       days: [0, [Validators.required, Validators.min(0)]]
