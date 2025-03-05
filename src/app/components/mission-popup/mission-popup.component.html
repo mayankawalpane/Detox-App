@@ -1,0 +1,15 @@
+<div class="popup-overlay" (click)="dismiss()">
+    <div class="popup-content" [class.failed]="detoxFailed" (click)="$event.stopPropagation()">
+      <div *ngIf="!detoxFailed">
+        <h2>Mission Successful!</h2>
+        <p>You're doing great! Keep going with your digital detox.</p>
+        <div class="emoji">🎉</div>
+      </div>
+      <div *ngIf="detoxFailed">
+        <h2>Detox Failed!</h2>
+        <p>You used your phone during the detox period.</p>
+        <div class="emoji">😔</div>
+      </div>
+      <button class="dismiss-button" (click)="dismiss()">Close</button>
+    </div>
+  </div>

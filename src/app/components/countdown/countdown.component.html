@@ -1,0 +1,36 @@
+<div class="countdown-container">
+    <div class="header">
+      <h1>Digital Detox</h1>
+      <p>Time remaining in your detox period</p>
+    </div>
+    
+    <div class="countdown-timer">
+      <div class="time-unit">
+        <div class="time-value">{{ days }}</div>
+        <div class="time-label">Days</div>
+      </div>
+      
+      <div class="time-unit">
+        <div class="time-value">{{ hours }}</div>
+        <div class="time-label">Hours</div>
+      </div>
+      
+      <div class="time-unit">
+        <div class="time-value">{{ minutes }}</div>
+        <div class="time-label">Minutes</div>
+      </div>
+      
+      <div class="time-unit">
+        <div class="time-value">{{ seconds }}</div>
+        <div class="time-label">Seconds</div>
+      </div>
+    </div>
+    
+    <div class="encouragement">
+      <p>Put your phone down and go do something else!</p>
+    </div>
+    
+    <button class="cancel-button" (click)="endSession()">End Session</button>
+    
+    <app-mission-popup *ngIf="showPopup" [detoxFailed]="detoxFailed" (dismissed)="dismissPopup()"></app-mission-popup>
+  </div>
