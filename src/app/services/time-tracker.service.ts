@@ -29,7 +29,7 @@ export class TimeTrackerService {
   });
   
   private userInfo = {
-    username: 'mayankawalpane',
+    username: 'mayank',
     currentDate: '2025-03-05',
     currentTime: '10:32:21'
   };
